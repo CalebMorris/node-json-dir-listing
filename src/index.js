@@ -1,5 +1,9 @@
 var fs = require('fs');
 var path = require('path');
+var Promise = require('bluebird');
+
+var lstat = Promise.promisify(fs.lstat);
+var readdir = Promise.promisify(fs.readdir);
 
 // TODO: Show different kinds of files (symlink, file, etc.)
 
@@ -9,45 +13,42 @@ var path = require('path');
  * @param {Object} options - {
  *   @option {bool} isRecursive - should continue into directories
  * }
- * @param {function} callback {
- *   @param {Error}
- *   @param {Object} info
- * }
+ * @return {Promise}
  */
 function dirTree(filename, options, callback) {
-  return fs.lstat(filename, function(err, stats) {
-    if (err) return callback(err);
+  return lstat(filename)
+    .then(function(stats) {
+      var info = {
+        path : filename,
+        name : path.basename(filename),
+      };
 
-    var info = {
-      path : filename,
-      name : path.basename(filename),
-    };
+      if (stats.isDirectory()) {
+        info.type = 'folder';
 
-    if (stats.isDirectory()) {
-      info.type = 'folder';
+        return readdir(filename)
+          .then(function(children) {
+            if (children && children.length > 0) {
 
-      fs.readdir(filename, function(err, children) {
-        if (err) return callback(err);
+              return Promise.map(children, function(child) {
+                return dirTree(filename + '/' + child);
+              }).then(function(resolvedChildren) {
+                info.children = resolvedChildren;
 
-        if (children && children.length > 0) {
+                return info;
+              });
 
-          info.children = children
-            .map(function(child) {
-              return dirTree(filename + '/' + child);
-            });
+            } else {
+              return info;
+            }
+          });
 
-        }
+      } else {
+        info.type = 'file';
 
-        return callback(null, info);
-      });
-
-    } else {
-      info.type = 'file';
-
-      return callback(null, info);
-    }
-
-  });
+        return info;
+      }
+    });
 }
 
 if (module.parent === undefined || module.parent === null) {
@@ -56,9 +57,15 @@ if (module.parent === undefined || module.parent === null) {
 
   console.log('base');
 
-  dirTree(process.argv[2], null, function(err, info) {
-    console.log(util.inspect(info, false, null));
-  });
+  var basePath = process.argv[2];
+
+  return dirTree(basePath)
+    .then(function(info) {
+      console.log('info', info);
+    })
+    .catch(function(err) {
+      console.error('failed to load path', basePath, err.stack);
+    })
 
   console.log('sync end');
 
