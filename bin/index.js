@@ -12,12 +12,14 @@ var usageString = '[options] <dir>';
 program
   .version(packageInfo.version)
   .usage(usageString)
+  // TODO: [Start]
   .option('-v, --verbose', 'Display more information as we walk the directory')
   .option('-d, --dryrun', 'Run through the process without actually creating any new files')
   .option('-R, --recursive', 'Recursively descend to any subfolders')
   .option('-o, --output [name]', 'Specify the name to use for the file output', '.files.json')
   .option('--override', 'Override any current files')
   .option('-p, --patch', 'Update current listings')
+  // TODO: [End]
   .parse(process.argv);
 
 var options = {};
