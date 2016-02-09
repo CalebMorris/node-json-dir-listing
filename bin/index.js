@@ -6,7 +6,8 @@ program
   .option('-d, --dryrun', 'Run through the process without actually creating any new files')
   .option('-R, --recursive', 'Recursively descend to any subfolders')
   .option('-f, --file [name]', 'Specify the name to use for the file output', '.files.json')
-  .option('-o, -override', 'Override any current files.')
+  .option('-o, --override', 'Override any current files')
+  .option('-p, --patch', 'Update current listings')
   .parse(process.argv);
 
 // console.log('you ordered a pizza with:');
