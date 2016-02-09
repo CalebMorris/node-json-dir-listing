@@ -51,22 +51,4 @@ function dirTree(filename, options, callback) {
     });
 }
 
-if (module.parent === undefined || module.parent === null) {
-  // node dirTree.js ~/foo/bar
-  var util = require('util');
-
-  console.log('base');
-
-  var basePath = process.argv[2];
-
-  return dirTree(basePath)
-    .then(function(info) {
-      console.log('info', info);
-    })
-    .catch(function(err) {
-      console.error('failed to load path', basePath, err.stack);
-    })
-
-  console.log('sync end');
-
-}
+module.exports = dirTree;
