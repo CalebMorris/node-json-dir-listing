@@ -14,10 +14,11 @@ var usageString = '[options] <dir>';
 program
   .version(packageInfo.version)
   .usage(usageString)
-  // TODO: [Start]
-  .option('-v, --verbose', 'Display more information as we walk the directory')
   .option('-d, --dryrun', 'Run through the process without actually creating any new files')
-  .option('-R, --recursive', 'Recursively descend to any subfolders')
+  // TODO: [Start]
+  .option('-R, --recursive', 'Recursively create listings for all subfolders')
+  .option('-s, --sparse [depth]', 'Create listings that only contains n [depth] of children', 1)
+  .option('-v, --verbose', 'Display more information as we walk the directory')
   .option('-o, --output [name]', 'Specify the name to use for the file output', '.files.json')
   .option('--override', 'Override any current files')
   .option('-p, --patch', 'Update current listings')
@@ -40,7 +41,9 @@ if (!program.args || program.args.length === 0) {
 
 return command(program.args[0], options)
   .then(function(info) {
-    console.log('info', info);
+    if (info) {
+      console.log(info);
+    }
   })
   .catch(function(err) {
     console.error('err', err.stack);
