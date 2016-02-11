@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 if (module.parent !== null) {
   throw new Error('Inproper use: for library use, look in src/. This is the bin root.');
 }
