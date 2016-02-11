@@ -1,9 +1,11 @@
 {
   "name": "json-dir-listing",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Tool to generate JSON directory listings",
   "main": "index.js",
-  "bin" : { "json-dir-listing" : "./bin/index.js" },
+  "bin": {
+    "json-dir-listing": "./bin/index.js"
+  },
   "scripts": {
     "clean": "rm -Rf ./coverage",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
