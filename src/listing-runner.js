@@ -17,6 +17,10 @@ function createListings(basePath, options) {
         return util.format('`%s`: %s', listingFile, JSON.stringify(pathInfo));
       }
 
+      if (options.recursive) {
+        return writeObjectToJSON(listingFile, pathInfo, { recursive : true });
+      }
+
       return writeObjectToJSON(listingFile, pathInfo);
     });
 }

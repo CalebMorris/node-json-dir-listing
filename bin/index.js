@@ -15,8 +15,8 @@ program
   .version(packageInfo.version)
   .usage(usageString)
   .option('-d, --dryrun', 'Run through the process without actually creating any new files')
+  .option('-R, --recursive', 'Recursively create listings for all subfolders')
   // TODO: [Start]
-  // .option('-R, --recursive', 'Recursively create listings for all subfolders')
   // .option('-s, --sparse [depth]', 'Create listings that only contains n [depth] of children', 1)
   // .option('-v, --verbose', 'Display more information as we walk the directory')
   // .option('-o, --output [name]', 'Specify the name to use for the file output', '.files.json')
@@ -41,7 +41,7 @@ if (!program.args || program.args.length === 0) {
 
 return command(program.args[0], options)
   .then(function(info) {
-    if (info) {
+    if (info && ! Array.isArray(info)) {
       console.log(info);
     }
   })
