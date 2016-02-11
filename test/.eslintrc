@@ -1,0 +1,5 @@
+{
+  rules: {
+    "brace-style": [ 0, "1tbs" ],
+  }
+}

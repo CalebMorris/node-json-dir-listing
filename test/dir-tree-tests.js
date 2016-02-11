@@ -1,11 +1,13 @@
+/* global describe, beforeEach, afterEach, after */
+
 var crypto = require('crypto');
 var fs = require('fs');
 var path = require('path');
 var expect = require('chai').expect;
 
-var temp = require("temp").track();
+var temp = require('temp').track();
 
-var dirTree = require('../src/');
+var dirTree = require('../src/dir-tree');
 
 function randKey() {
   return crypto.randomBytes(20).toString('hex');
@@ -24,7 +26,7 @@ describe('dirTreeTests', function() {
   });
 
   afterEach(function(done) {
-    temp.cleanup(function(err, stats) { err ? done(err) : done(); });
+    temp.cleanup(function(err, stats) { return err ? done(err) : done(); });
   });
 
   after(function(done) {

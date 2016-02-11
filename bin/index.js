@@ -5,7 +5,7 @@ if (module.parent !== null) {
 var program = require('commander');
 
 var packageInfo = require('../package.json');
-var command = require('../src/');
+var command = require('../src/dir-tree');
 
 var usageString = '[options] <dir>';
 
