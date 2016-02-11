@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Tool to generate JSON directory listings",
   "main": "index.js",
+  "bin" : { "json-dir-listing" : "./bin/index.js" },
   "scripts": {
     "clean": "rm -Rf ./coverage",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
