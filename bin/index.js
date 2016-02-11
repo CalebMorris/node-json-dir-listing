@@ -16,12 +16,12 @@ program
   .usage(usageString)
   .option('-d, --dryrun', 'Run through the process without actually creating any new files')
   // TODO: [Start]
-  .option('-R, --recursive', 'Recursively create listings for all subfolders')
-  .option('-s, --sparse [depth]', 'Create listings that only contains n [depth] of children', 1)
-  .option('-v, --verbose', 'Display more information as we walk the directory')
-  .option('-o, --output [name]', 'Specify the name to use for the file output', '.files.json')
-  .option('--override', 'Override any current files')
-  .option('-p, --patch', 'Update current listings')
+  // .option('-R, --recursive', 'Recursively create listings for all subfolders')
+  // .option('-s, --sparse [depth]', 'Create listings that only contains n [depth] of children', 1)
+  // .option('-v, --verbose', 'Display more information as we walk the directory')
+  // .option('-o, --output [name]', 'Specify the name to use for the file output', '.files.json')
+  // .option('--override', 'Override any current files')
+  // .option('-p, --patch', 'Update current listings')
   // TODO: [End]
   .parse(process.argv);
 
