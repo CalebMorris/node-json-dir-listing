@@ -15,4 +15,6 @@ function writeObjectToJSON(filename, obj) {
   });
 }
 
-module.exports = writeObjectToJSON;
+module.exports = {
+  writeObjectToJSON : writeObjectToJSON,
+};

@@ -10,14 +10,9 @@ var readdir = Promise.promisify(fs.readdir);
 /**
  * @method dirTree
  * @param {string} filename - path to file to start
- * @param {Object} options - {
- *   @option {bool} isRecursive - should continue into directories
- * }
  * @return {Promise} Returns promise of an info object
  */
-function dirTree(filename, options) {
-  options = options || {};
-
+function dirTree(filename) {
   return lstat(filename)
     .then(function(stats) {
       var info = {
