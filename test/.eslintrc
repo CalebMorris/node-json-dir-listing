@@ -1,5 +1,10 @@
 {
-  rules: {
+  "env": {
+    "mocha": true
+  },
+  "rules": {
     "brace-style": [ 0, "1tbs" ],
-  }
+    "curly": [0],
+    "max-nested-callbacks": [2, 10],
+  },
 }
