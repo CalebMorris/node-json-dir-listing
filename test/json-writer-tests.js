@@ -8,7 +8,7 @@ var readFile = Promise.promisify(fs.readFile);
 
 var temp = require("temp").track();
 
-var writeObjectToJSON = require('../src/json-writer');
+var writeObjectToJSON = require('../src/json-writer').writeObjectToJSON;
 
 function randKey() {
   return crypto.randomBytes(20).toString('hex');

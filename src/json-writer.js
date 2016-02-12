@@ -10,8 +10,6 @@ var defaultListingFile = '.listings.json';
 function writeObjectToJSON(filename, obj, options) {
   options = options || {};
 
-  console.log('writeObjectToJSON', filename, JSON.stringify(obj))
-
   return Promise.try(function() {
     assert((typeof filename) === 'string', '`filename` must be a string');
     assert((typeof obj) === 'object', '`obj` must be an object');
