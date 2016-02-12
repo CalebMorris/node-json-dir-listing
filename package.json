@@ -14,6 +14,10 @@
     "lint-quiet": "./node_modules/.bin/eslint --ext .js --quiet .",
     "coverage": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --reporter dot --recursive"
   },
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/CalebMorris/node-json-dir-listing"
+  },
   "keywords": [
     "cli",
     "json",
