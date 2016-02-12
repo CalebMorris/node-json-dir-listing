@@ -2,6 +2,24 @@
 
 Tool for creating a file that contains the contents and types of everything in the directory.
 
-Use case: dynamically generate webpages based off a structured folder system but
-cannot access the directory listing of each folder. This tool allows accessing
-the listing by reading the file.
+# Example
+1. `mkdir tmp`
+1. `touch tmp/test.txt`
+1. `json-dir-listing tmp/`
+1. Creates `tmp/.listings.json` containing
+```
+{
+  "path":"tmp",
+  "name":"tmp",
+  "type":"folder",
+  "children":[{
+    "path":"tmp/test.txt",
+    "name":"test.txt",
+    "type":"file"
+  }]
+}
+```
+
+# Why?
+
+I wanted to create a dynamic client-only website as my personal CV/blog/whatever, but I didn't want it become bloated with the content itself so I decided to dynamically load and render all the content. The setup I was using doesn't allow directory listings, but allows file access so I created this to get a list of all files in a directory.
