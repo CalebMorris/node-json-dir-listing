@@ -11,17 +11,17 @@ function createListings(basePath, options) {
 
   return dirTree(basePath)
     .then(function(pathInfo) {
+      if (options.output) {
+        defaultListingFile = options.output;
+      }
+
       var listingFile = path.join(basePath, defaultListingFile);
 
       if (options.dryrun) {
         return util.format('%s', JSON.stringify({ listingFile : pathInfo }));
       }
 
-      if (options.recursive) {
-        return writeObjectToJSON(listingFile, pathInfo, { recursive : true });
-      }
-
-      return writeObjectToJSON(listingFile, pathInfo);
+      return writeObjectToJSON(listingFile, pathInfo, options);
     });
 }
 

@@ -8,6 +8,7 @@ var program = require('commander');
 
 var packageInfo = require('../package.json');
 var command = require('../src/listing-runner');
+var defaultListingFile = require('../src/config').defaults.listingFile;
 
 var usageString = '[options] <dir>';
 
@@ -16,10 +17,10 @@ program
   .usage(usageString)
   .option('-d, --dryrun', 'Run through the process without actually creating any new files')
   .option('-R, --recursive', 'Recursively create listings for all subfolders')
+  .option('-o, --output [name]', 'Specify the name to use for the file output', defaultListingFile)
   // TODO: [Start]
   // .option('-s, --sparse [depth]', 'Create listings that only contains n [depth] of children', 1)
   // .option('-v, --verbose', 'Display more information as we walk the directory')
-  // .option('-o, --output [name]', 'Specify the name to use for the file output', '.files.json')
   // .option('--override', 'Override any current files')
   // .option('-p, --patch', 'Update current listings')
   // TODO: [End]
@@ -46,5 +47,6 @@ return command(program.args[0], options)
     }
   })
   .catch(function(err) {
-    console.error('err', err.stack);
+    console.error('Failed to create listings', err.stack);
+    process.exit(-1);
   });
