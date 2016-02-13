@@ -14,7 +14,7 @@ function randKey() {
   return crypto.randomBytes(20).toString('hex');
 }
 
-describe('dirTreeTests', function() {
+describe('json-writer-tests', function() {
 
   var basePath;
 
