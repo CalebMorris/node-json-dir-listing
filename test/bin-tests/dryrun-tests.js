@@ -11,7 +11,7 @@ function randKey() {
   return crypto.randomBytes(20).toString('hex');
 }
 
-describe('no-options-tests', function() {
+describe('dryrun-tests', function() {
 
   var basePath;
 
@@ -36,17 +36,26 @@ describe('no-options-tests', function() {
       });
     });
 
-    it('should have create simple listing file', function(done) {
+    it('should have no listing and stdout', function(done) {
       try {
-        return binRunner(basePath, [], function(report) {
+        return binRunner(basePath, ['-d'], function(report) {
           expect(report).to.be.an('object');
           expect(report.path).to.equal(basePath);
           expect(report.exitCode).to.equal(0);
           expect(report.stdout).to.be.an('array');
-          expect(report.stdout.length).to.equal(0);
+          expect(report.stdout.length).to.equal(1);
+          try {
+            var output = JSON.parse(report.stdout[0]);
+            expect(output).to.be.an('object');
+          } catch (err) {
+            done(err);
+          }
           expect(report.stderr).to.be.an('array');
           expect(report.stderr.length).to.equal(0);
-          done();
+          fs.exists(path.join(basePath, '.listings.json'), function(exists) {
+            expect(exists).to.equal(false);
+            done();
+          });
         });
       } catch (err) { done(err); }
     });

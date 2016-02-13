@@ -1,7 +1,7 @@
 var spawn = require('child_process').spawn;
 
-function runner(dirPath, callback) {
-  var jsonDirListing = spawn('node', ['./bin/index.js', dirPath]);
+function runner(dirPath, flags, callback) {
+  var jsonDirListing = spawn('node', ['./bin/index.js'].concat(flags).concat(dirPath));
 
   var stdoutSet = [];
   var stderrSet = [];
