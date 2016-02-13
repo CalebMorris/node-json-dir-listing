@@ -8,19 +8,19 @@ var writeFile = Promise.promisify(fs.writeFile);
 
 var listingFile = require('./config').defaults.listingFile;
 
-function trimObjectDepth(foobar, depth) {
+function trimObjectDepth(trimmableObject, depth) {
   return Promise.try(function() {
     if (depth === 0) {
-      delete foobar.children;
-      return foobar;
+      delete trimmableObject.children;
+      return trimmableObject;
     }
 
-    return Promise.map(foobar.children, function(child) {
+    return Promise.map(trimmableObject.children, function(child) {
       return trimObjectDepth(child, depth - 1);
     })
       .then(function(updatedChildren) {
-        foobar.children = updatedChildren;
-        return foobar;
+        trimmableObject.children = updatedChildren;
+        return trimmableObject;
       });
   });
 }
