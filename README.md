@@ -1,5 +1,8 @@
 # json-dir-listing
 
+[![Build Status](https://travis-ci.org/CalebMorris/node-json-dir-listing.svg?branch=master)](https://travis-ci.org/CalebMorris/node-json-dir-listing)
+[![Coverage Status](https://coveralls.io/repos/github/CalebMorris/node-json-dir-listing/badge.svg?branch=master)](https://coveralls.io/github/CalebMorris/node-json-dir-listing?branch=master)
+
 Tool for creating a file that contains the contents and types of everything in the directory.
 
 # Example
