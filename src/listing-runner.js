@@ -4,7 +4,7 @@ var util = require('util');
 var dirTree = require('./dir-tree');
 var writeObjectToJSON = require('./json-writer').writeObjectToJSON;
 
-var defaultListingFile = '.listings.json';
+var defaultListingFile = require('./config').defaults.listingFile;
 
 function createListings(basePath, options) {
   options = options || {};

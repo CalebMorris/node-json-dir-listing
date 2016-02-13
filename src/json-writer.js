@@ -5,7 +5,7 @@ var Promise = require('bluebird');
 
 var writeFile = Promise.promisify(fs.writeFile);
 
-var defaultListingFile = '.listings.json';
+var defaultListingFile = require('./config').defaults.listingFile;
 
 function writeObjectToJSON(filename, obj, options) {
   options = options || {};

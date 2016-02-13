@@ -4,6 +4,7 @@ var path = require('path');
 var expect = require('chai').expect;
 
 var binRunner = require('./runner');
+var defaultListingFile = require('../../src/config').defaults.listingFile;
 
 var temp = require('temp').track();
 
@@ -52,7 +53,7 @@ describe('dryrun-tests', function() {
           }
           expect(report.stderr).to.be.an('array');
           expect(report.stderr.length).to.equal(0);
-          fs.exists(path.join(basePath, '.listings.json'), function(exists) {
+          fs.exists(path.join(basePath, defaultListingFile), function(exists) {
             expect(exists).to.equal(false);
             done();
           });
