@@ -42,9 +42,11 @@ if (!program.args || program.args.length === 0) {
 }
 
 return command(program.args[0], options)
-  .then(function(info) {
-    if (info && ! Array.isArray(info)) {
-      console.log(info);
+  .then(function(reports) {
+    if (reports) {
+      for (var i = 0; i < reports.length; i++) {
+        console.log(reports[i]);
+      }
     }
   })
   .catch(function(err) {
