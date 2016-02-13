@@ -14,7 +14,7 @@ function createListings(basePath, options) {
       var listingFile = path.join(basePath, defaultListingFile);
 
       if (options.dryrun) {
-        return util.format('`%s`: %s', listingFile, JSON.stringify(pathInfo));
+        return util.format('%s', JSON.stringify({ listingFile : pathInfo }));
       }
 
       if (options.recursive) {
