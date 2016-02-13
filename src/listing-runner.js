@@ -1,5 +1,4 @@
 var path = require('path');
-var util = require('util');
 
 var dirTree = require('./dir-tree');
 var writeObjectToJSON = require('./json-writer').writeObjectToJSON;
@@ -16,10 +15,6 @@ function createListings(basePath, options) {
       }
 
       var listingFile = path.join(basePath, defaultListingFile);
-
-      if (options.dryrun) {
-        return util.format('%s', JSON.stringify({ listingFile : pathInfo }));
-      }
 
       return writeObjectToJSON(listingFile, pathInfo, options);
     });
