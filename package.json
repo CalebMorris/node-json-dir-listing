@@ -4,6 +4,7 @@
   "description": "Tool to generate JSON directory listings",
   "main": "index.js",
   "engines" : {
+    "node" : ">=0.10.0",
     "npm" : "^2.0.0"
   },
   "bin": {
