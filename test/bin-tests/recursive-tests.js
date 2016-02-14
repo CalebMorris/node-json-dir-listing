@@ -80,7 +80,12 @@ describe('recursive-tests', function() {
             basePath,
           ];
           for (var i = 0; i < report.stdout.length; i++) {
-            var dryrunReport = JSON.parse(report.stdout[i]);
+            var dryrunReport;
+            try {
+              dryrunReport = JSON.parse(report.stdout[i]);
+            } catch (err) {
+              expect.fail(null, null, 'Failed to parse json: ' + report.stdout[i]);
+            }
             expect(dryrunReport).to.be.an('object');
             expect(dryrunReport.listingFile).to.equal(path.join(baseFiles[i], defaultListingFile));
           }
