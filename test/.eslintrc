@@ -6,5 +6,6 @@
     "brace-style": [ 0, "1tbs" ],
     "curly": [0],
     "max-nested-callbacks": [2, 10],
+    "no-console": [0],
   },
 }
