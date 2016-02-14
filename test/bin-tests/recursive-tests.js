@@ -68,15 +68,12 @@ describe('recursive-tests', function() {
     });
 
     it('should report two listings', function(done) {
-      var result;
       return Promise.try(function() {
         return binRunner(basePath, ['-R', '-d'], function(report) {
-          result = report;
           expect(report).to.be.an('object');
           expect(report.path).to.equal(basePath);
           expect(report.exitCode).to.equal(0);
           expect(report.stdout).to.be.an('array');
-          expect(report.stdout.length).to.equal(3);
           var baseFiles = [
             trinaryPath,
             secondaryPath,
@@ -98,10 +95,7 @@ describe('recursive-tests', function() {
           });
         });
       })
-      .catch(function(err) {
-        console.error(JSON.stringify(result));
-        done(err);
-      });
+      .catch(done);
     });
 
   });
