@@ -27,10 +27,11 @@ function trimObjectDepth(trimmableObject, depth) {
 
 function dryRunShim(filename, obj, options) {
   return Promise.try(function() {
-    if (options.dryrun) {
-      return options.reportDryRunWrite(util.format('%s', JSON.stringify({ report : obj, listingFile : filename })));
+    if (options.dryrun && options.reportDryRunWrite) {
+      options.reportDryRunWrite(util.format('%s', JSON.stringify({ report : obj, listingFile : filename })));
+    } else {
+      return writeFile(filename, JSON.stringify(obj));
     }
-    return writeFile(filename, JSON.stringify(obj));
   });
 }
 
