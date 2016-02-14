@@ -74,7 +74,7 @@ describe('recursive-tests', function() {
           expect(report.path).to.equal(basePath);
           expect(report.exitCode).to.equal(0);
           expect(report.stdout).to.be.an('array');
-          expect(report.stdout.length).to.equal(3);
+          expect(report.stdout.length).to.equal(3, JSON.stringify(report.stdout));
           var baseFiles = [ trinaryPath, secondaryPath, basePath ];
           for (var i = 0; i < report.stdout.length; i++) {
             var dryrunReport;
