@@ -2,6 +2,7 @@ var crypto = require('crypto');
 var fs = require('fs');
 var path = require('path');
 var expect = require('chai').expect;
+var Promise = require('bluebird');
 
 var binRunner = require('./runner');
 var defaultListingFile = require('../../src/config').defaults.listingFile;
@@ -67,25 +68,25 @@ describe('recursive-tests', function() {
     });
 
     it('should report two listings', function(done) {
-      try {
+      var result;
+      return Promise.try(function() {
         return binRunner(basePath, ['-R', '-d'], function(report) {
+          result = report;
           expect(report).to.be.an('object');
           expect(report.path).to.equal(basePath);
           expect(report.exitCode).to.equal(0);
           expect(report.stdout).to.be.an('array');
           expect(report.stdout.length).to.equal(3);
-          try {
-            var baseFiles = [
-              trinaryPath,
-              secondaryPath,
-              basePath,
-            ];
-            for (var i = 0; i < report.stdout.length; i++) {
-              var dryrunReport = JSON.parse(report.stdout[i]);
-              expect(dryrunReport).to.be.an('object');
-              expect(dryrunReport.listingFile).to.equal(path.join(baseFiles[i], defaultListingFile));
-            }
-          } catch (err) { return done(err); }
+          var baseFiles = [
+            trinaryPath,
+            secondaryPath,
+            basePath,
+          ];
+          for (var i = 0; i < report.stdout.length; i++) {
+            var dryrunReport = JSON.parse(report.stdout[i]);
+            expect(dryrunReport).to.be.an('object');
+            expect(dryrunReport.listingFile).to.equal(path.join(baseFiles[i], defaultListingFile));
+          }
           expect(report.stderr).to.be.an('array');
           expect(report.stderr.length).to.equal(0);
           return fs.exists(path.join(basePath, defaultListingFile), function(exists) {
@@ -96,7 +97,11 @@ describe('recursive-tests', function() {
             });
           });
         });
-      } catch (err) { done(err); }
+      })
+      .catch(function(err) {
+        console.error(JSON.stringify(result));
+        done(err);
+      });
     });
 
   });
