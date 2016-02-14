@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Tool to generate JSON directory listings",
   "main": "index.js",
+  "engines" : {
+    "npm" : "^2.0.0"
+  },
   "bin": {
     "json-dir-listing": "./bin/index.js"
   },
