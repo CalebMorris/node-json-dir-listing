@@ -1,17 +1,16 @@
-var crypto = require('crypto');
 var fs = require('fs');
 var path = require('path');
 var expect = require('chai').expect;
 var Promise = require('bluebird');
 
+var mkdir = Promise.promisify(fs.mkdir);
+var writeFile = Promise.promisify(fs.writeFile);
+
 var binRunner = require('./runner');
+var testUtil = require('../util');
 var defaultListingFile = require('../../src/config').defaults.listingFile;
 
 var temp = require('temp').track();
-
-function randKey() {
-  return crypto.randomBytes(20).toString('hex');
-}
 
 describe('recursive-tests', function() {
 
@@ -35,19 +34,24 @@ describe('recursive-tests', function() {
     var trinaryPath;
 
     beforeEach(function(done) {
-      secondaryPath = path.join(basePath, randKey());
-      trinaryPath = path.join(secondaryPath, randKey());
-      return fs.mkdir(secondaryPath, function(err) {
-        if (err) return done(err);
-        return fs.mkdir(trinaryPath, function(innerErr) {
-          if (innerErr) return done(innerErr);
-          return fs.writeFile(path.join(basePath, randKey()), 'test data', done);
-        });
-      });
+      return Promise.try(function() {
+        secondaryPath = path.join(basePath, testUtil.randKey());
+        trinaryPath = path.join(secondaryPath, testUtil.randKey());
+
+        return mkdir(secondaryPath)
+          .then(function() {
+            return mkdir(trinaryPath);
+          })
+          .then(function() {
+            return writeFile(path.join(trinaryPath, testUtil.randKey()), 'test data');
+          });
+      })
+      .then(done)
+      .catch(done);
     });
 
     it('should have two listings', function(done) {
-      try {
+      return Promise.try(function() {
         return binRunner(basePath, ['-R'], function(report) {
           expect(report).to.be.an('object');
           expect(report.path).to.equal(basePath);
@@ -56,15 +60,18 @@ describe('recursive-tests', function() {
           expect(report.stdout.length).to.equal(0);
           expect(report.stderr).to.be.an('array');
           expect(report.stderr.length).to.equal(0);
-          return fs.exists(path.join(basePath, defaultListingFile), function(exists) {
-            expect(exists).to.equal(true);
-            return fs.exists(path.join(secondaryPath, defaultListingFile), function(innerExists) {
+          return testUtil.doesFileExist(path.join(basePath, defaultListingFile))
+            .then(function(exists) {
+              expect(exists).to.equal(true);
+              return testUtil.doesFileExist(path.join(secondaryPath, defaultListingFile));
+            })
+            .then(function(innerExists) {
               expect(innerExists).to.equal(true);
-              done();
             });
-          });
         });
-      } catch (err) { done(err); }
+      })
+      .then(done)
+      .catch(done);
     });
 
     it('should report two listings', function(done) {
@@ -88,15 +95,17 @@ describe('recursive-tests', function() {
           }
           expect(report.stderr).to.be.an('array');
           expect(report.stderr.length).to.equal(0);
-          return fs.exists(path.join(basePath, defaultListingFile), function(exists) {
-            expect(exists).to.equal(false);
-            return fs.exists(path.join(secondaryPath, defaultListingFile), function(innerExists) {
+          return testUtil.doesFileExist(path.join(basePath, defaultListingFile))
+            .then(function(exists) {
+              expect(exists).to.equal(false);
+              return testUtil.doesFileExist(path.join(secondaryPath, defaultListingFile));
+            })
+            .then(function(innerExists) {
               expect(innerExists).to.equal(false);
-              done();
             });
-          });
         });
       })
+      .then(done)
       .catch(done);
     });
 

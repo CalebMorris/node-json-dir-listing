@@ -1,18 +1,14 @@
-var crypto = require('crypto');
 var fs = require('fs');
 var path = require('path');
 var expect = require('chai').expect;
 var Promise = require('bluebird');
 
 var readFile = Promise.promisify(fs.readFile);
-
 var temp = require('temp').track();
 
-var writeObjectToJSON = require('../src/json-writer').writeObjectToJSON;
+var testUtil = require('./util');
 
-function randKey() {
-  return crypto.randomBytes(20).toString('hex');
-}
+var writeObjectToJSON = require('../src/json-writer').writeObjectToJSON;
 
 describe('json-writer-tests', function() {
 
@@ -64,15 +60,15 @@ describe('json-writer-tests', function() {
     var testDir;
 
     beforeEach(function(done) {
-      testDir = path.join(basePath, randKey());
+      testDir = path.join(basePath, testUtil.randKey());
       fs.mkdir(testDir, done);
     });
 
     it('should write object to file', function(done) {
 
-      var testFile = path.join(testDir, randKey());
+      var testFile = path.join(testDir, testUtil.randKey());
       var testData = {};
-      testData[randKey()] = randKey();
+      testData[testUtil.randKey()] = testUtil.randKey();
 
       return writeObjectToJSON(testFile, testData)
         .then(function() {
@@ -87,10 +83,10 @@ describe('json-writer-tests', function() {
     });
 
     it('should write to specified name', function(done) {
-      var testFile = path.join(testDir, randKey());
+      var testFile = path.join(testDir, testUtil.randKey());
       var testData = {};
-      var outputKey = randKey();
-      testData[randKey()] = randKey();
+      var outputKey = testUtil.randKey();
+      testData[testUtil.randKey()] = testUtil.randKey();
 
       return writeObjectToJSON(testFile, testData, { output : outputKey })
         .then(function() {
@@ -106,9 +102,9 @@ describe('json-writer-tests', function() {
 
     it('should report and not write', function(done) {
       return Promise.try(function() {
-        var testFile = path.join(testDir, randKey());
+        var testFile = path.join(testDir, testUtil.randKey());
         var testData = {};
-        testData[randKey()] = randKey();
+        testData[testUtil.randKey()] = testUtil.randKey();
 
         var reports = [];
 
@@ -116,20 +112,16 @@ describe('json-writer-tests', function() {
           dryrun : true,
           reportDryRunWrite : function(report) { reports.push(report); },
         }).then(function() {
-          return new Promise(function(resolve, reject) {
-            fs.exists(testFile, function(exists) {
-              try {
-                expect(exists).to.equal(false);
-                expect(reports).to.be.an('array');
-                expect(reports.length).to.equal(1);
-                var report = JSON.parse(reports[0]);
-                expect(report).to.be.an('object');
-                expect(report.listingFile).to.equal(testFile);
-                expect(report.report).to.deep.equal(testData);
-                return resolve();
-              } catch (err) { return reject(err); }
+          return testUtil.doesFileExist(testFile)
+            .then(function(exists) {
+              expect(exists).to.equal(false);
+              expect(reports).to.be.an('array');
+              expect(reports.length).to.equal(1);
+              var report = JSON.parse(reports[0]);
+              expect(report).to.be.an('object');
+              expect(report.listingFile).to.equal(testFile);
+              expect(report.report).to.deep.equal(testData);
             });
-          });
         });
       })
       .then(done)
@@ -138,20 +130,16 @@ describe('json-writer-tests', function() {
 
     it('should write without reporter callback', function(done) {
       return Promise.try(function() {
-        var testFile = path.join(testDir, randKey());
+        var testFile = path.join(testDir, testUtil.randKey());
         var testData = {};
-        testData[randKey()] = randKey();
+        testData[testUtil.randKey()] = testUtil.randKey();
 
         return writeObjectToJSON(testFile, testData, { dryrun : true })
           .then(function() {
-            return new Promise(function(resolve, reject) {
-              fs.exists(testFile, function(exists) {
-                try {
-                  expect(exists).to.equal(true);
-                  return resolve();
-                } catch (err) { return reject(err); }
+            return testUtil.doesFileExist(testFile)
+              .then(function(exists) {
+                expect(exists).to.equal(true);
               });
-            });
           });
       })
       .then(done)
@@ -160,9 +148,9 @@ describe('json-writer-tests', function() {
 
     it('should generate sparse report', function(done) {
       return Promise.try(function() {
-        var testFile = path.join(testDir, randKey());
+        var testFile = path.join(testDir, testUtil.randKey());
         var testData = { children : [] };
-        testData[randKey()] = randKey();
+        testData[testUtil.randKey()] = testUtil.randKey();
 
         var reports = [];
 
@@ -171,21 +159,17 @@ describe('json-writer-tests', function() {
           dryrun : true,
           reportDryRunWrite : function(report) { reports.push(report); },
         }).then(function() {
-          return new Promise(function(resolve, reject) {
-            delete testData.children;
-            fs.exists(testFile, function(exists) {
-              try {
-                expect(exists).to.equal(false);
-                expect(reports).to.be.an('array');
-                expect(reports.length).to.equal(1);
-                var report = JSON.parse(reports[0]);
-                expect(report).to.be.an('object');
-                expect(report.listingFile).to.equal(testFile);
-                expect(report.report).to.deep.equal(testData);
-                return resolve();
-              } catch (err) { return reject(err); }
+          delete testData.children;
+          return testUtil.doesFileExist(testFile)
+            .then(function(exists) {
+              expect(exists).to.equal(false);
+              expect(reports).to.be.an('array');
+              expect(reports.length).to.equal(1);
+              var report = JSON.parse(reports[0]);
+              expect(report).to.be.an('object');
+              expect(report.listingFile).to.equal(testFile);
+              expect(report.report).to.deep.equal(testData);
             });
-          });
         });
       })
       .then(done)
@@ -199,7 +183,7 @@ describe('json-writer-tests', function() {
     var dirs = [];
 
     beforeEach(function(done) {
-      return Promise.reduce([randKey(), randKey(), randKey()], function(current, nextKey) {
+      return Promise.reduce([testUtil.randKey(), testUtil.randKey(), testUtil.randKey()], function(current, nextKey) {
         var nextDir = path.join(current, nextKey);
         dirs.push(nextDir);
         return new Promise(function(resolve, reject) {

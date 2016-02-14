@@ -1,16 +1,13 @@
-var crypto = require('crypto');
 var fs = require('fs');
 var path = require('path');
 var expect = require('chai').expect;
+var Promise = require('bluebird');
 
 var binRunner = require('./runner');
 var defaultListingFile = require('../../src/config').defaults.listingFile;
+var testUtil = require('../util');
 
 var temp = require('temp').track();
-
-function randKey() {
-  return crypto.randomBytes(20).toString('hex');
-}
 
 describe('dryrun-tests', function() {
 
@@ -31,34 +28,32 @@ describe('dryrun-tests', function() {
   describe('single dir single file', function() {
 
     beforeEach(function(done) {
-      return fs.mkdir(path.join(basePath, randKey()), function(err) {
+      return fs.mkdir(path.join(basePath, testUtil.randKey()), function(err) {
         if (err) return done(err);
-        return fs.writeFile(path.join(basePath, randKey()), 'test data', done);
+        return fs.writeFile(path.join(basePath, testUtil.randKey()), 'test data', done);
       });
     });
 
     it('should have no listing and stdout', function(done) {
-      try {
+      return Promise.try(function() {
         return binRunner(basePath, ['-d'], function(report) {
           expect(report).to.be.an('object');
           expect(report.path).to.equal(basePath);
           expect(report.exitCode).to.equal(0);
           expect(report.stdout).to.be.an('array');
           expect(report.stdout.length).to.equal(1);
-          try {
-            var output = JSON.parse(report.stdout[0]);
-            expect(output).to.be.an('object');
-          } catch (err) {
-            done(err);
-          }
+          var output = JSON.parse(report.stdout[0]);
+          expect(output).to.be.an('object');
           expect(report.stderr).to.be.an('array');
           expect(report.stderr.length).to.equal(0);
-          fs.exists(path.join(basePath, defaultListingFile), function(exists) {
-            expect(exists).to.equal(false);
-            done();
-          });
+          return testUtil.doesFileExist(path.join(basePath, defaultListingFile))
+            .then(function(exists) {
+              expect(exists).to.equal(false);
+            });
         });
-      } catch (err) { done(err); }
+      })
+      .then(done)
+      .catch(done);
     });
 
   });

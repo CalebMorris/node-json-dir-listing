@@ -1,16 +1,17 @@
-var crypto = require('crypto');
 var fs = require('fs');
 var path = require('path');
 var expect = require('chai').expect;
+var Promise = require('bluebird');
+
+var mkdir = Promise.promisify(fs.mkdir);
+var writeFile = Promise.promisify(fs.writeFile);
 
 var binRunner = require('./runner');
+var testUtil = require('../util');
+
 var defaultListingFile = require('../../src/config').defaults.listingFile;
 
 var temp = require('temp').track();
-
-function randKey() {
-  return crypto.randomBytes(20).toString('hex');
-}
 
 describe('sparse-tests', function() {
 
@@ -34,19 +35,23 @@ describe('sparse-tests', function() {
     var innerDir;
 
     beforeEach(function(done) {
-      outerDir = path.join(basePath, randKey());
-      return fs.mkdir(outerDir, function(err) {
-        if (err) return done(err);
-        innerDir = path.join(outerDir, randKey());
-        return fs.mkdir(innerDir, function(innerErr) {
-          if (innerErr) return done(innerErr);
-          return fs.writeFile(path.join(basePath, randKey()), 'test data', done);
-        });
-      });
+      return Promise.try(function() {
+        outerDir = path.join(basePath, testUtil.randKey());
+        return mkdir(outerDir)
+          .then(function() {
+            innerDir = path.join(outerDir, testUtil.randKey());
+            return mkdir(innerDir);
+          })
+          .then(function() {
+            return writeFile(path.join(basePath, testUtil.randKey()), 'test data');
+          });
+      })
+      .then(done)
+      .catch(done);
     });
 
     it('should have no children', function(done) {
-      try {
+      return Promise.try(function() {
         return binRunner(basePath, ['-d', '-s', '0'], function(report) {
           expect(report).to.be.an('object');
           expect(report.path).to.equal(basePath);
@@ -54,22 +59,22 @@ describe('sparse-tests', function() {
           expect(report.stderr.length).to.equal(0);
           expect(report.stdout).to.be.an('array');
           expect(report.stdout.length).to.equal(1);
-          try {
-            var run = JSON.parse(report.stdout);
-            expect(run).to.be.an('object');
-            expect(run).to.not.contain.keys(['children']);
-          } catch (err) { return done(err); }
+          var run = JSON.parse(report.stdout);
+          expect(run).to.be.an('object');
+          expect(run).to.not.contain.keys(['children']);
           expect(report.exitCode).to.equal(0);
-          return fs.exists(path.join(basePath, defaultListingFile), function(exists) {
-            expect(exists).to.equal(false);
-            return done();
-          });
+          return testUtil.doesFileExist(path.join(basePath, defaultListingFile))
+            .then(function(exists) {
+              expect(exists).to.equal(false);
+            });
         });
-      } catch (err) { done(err); }
+      })
+      .then(done)
+      .catch(done);
     });
 
     it('should have no children', function(done) {
-      try {
+      return Promise.try(function() {
         return binRunner(basePath, ['-d', '-s', '1'], function(report) {
           expect(report).to.be.an('object');
           expect(report.path).to.equal(basePath);
@@ -77,25 +82,25 @@ describe('sparse-tests', function() {
           expect(report.stderr.length).to.equal(0);
           expect(report.stdout).to.be.an('array');
           expect(report.stdout.length).to.equal(1);
-          try {
-            var run = JSON.parse(report.stdout);
-            expect(run).to.be.an('object');
-            expect(run).to.contain.keys(['report']);
-            expect(run.report).to.contain.keys(['children']);
-            expect(run.report.children).to.be.an('array');
-            for (var i = 0; i < run.report.children.length; i++) {
-              var child = run.report.children[i];
-              expect(child).to.be.an('object');
-              expect(child).to.not.contain.keys(['children']);
-            }
-          } catch (err) { return done(err); }
+          var run = JSON.parse(report.stdout);
+          expect(run).to.be.an('object');
+          expect(run).to.contain.keys(['report']);
+          expect(run.report).to.contain.keys(['children']);
+          expect(run.report.children).to.be.an('array');
+          for (var i = 0; i < run.report.children.length; i++) {
+            var child = run.report.children[i];
+            expect(child).to.be.an('object');
+            expect(child).to.not.contain.keys(['children']);
+          }
           expect(report.exitCode).to.equal(0);
-          return fs.exists(path.join(basePath, defaultListingFile), function(exists) {
-            expect(exists).to.equal(false);
-            return done();
-          });
+          return testUtil.doesFileExist(path.join(basePath, defaultListingFile))
+            .then(function(exists) {
+              expect(exists).to.equal(false);
+            });
         });
-      } catch (err) { done(err); }
+      })
+      .then(done)
+      .catch(done);
     });
 
   });

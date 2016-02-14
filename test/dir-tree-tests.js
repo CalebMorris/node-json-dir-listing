@@ -1,17 +1,12 @@
-/* global describe, beforeEach, afterEach, after */
-
-var crypto = require('crypto');
 var fs = require('fs');
 var path = require('path');
 var expect = require('chai').expect;
 
 var temp = require('temp').track();
 
-var dirTree = require('../src/dir-tree');
+var testUtil = require('./util');
 
-function randKey() {
-  return crypto.randomBytes(20).toString('hex');
-}
+var dirTree = require('../src/dir-tree');
 
 describe('dirTreeTests', function() {
 
@@ -30,15 +25,15 @@ describe('dirTreeTests', function() {
   });
 
   after(function(done) {
-    temp.cleanup(function(err, stats) { err ? done(err) : done(); });
-  })
+    temp.cleanup(function(err, stats) { return err ? done(err) : done(); });
+  });
 
   describe('empty dir test', function() {
 
     var testDir;
 
     beforeEach(function(done) {
-      testDir = path.join(basePath, randKey());
+      testDir = path.join(basePath, testUtil.randKey());
       fs.mkdir(testDir, done);
     });
 
@@ -61,10 +56,10 @@ describe('dirTreeTests', function() {
     var testDir;
 
     beforeEach(function(done) {
-      testDir = path.join(basePath, randKey());
+      testDir = path.join(basePath, testUtil.randKey());
       fs.mkdir(testDir, function(err) {
         if (err) done(err);
-        fs.mkdir(path.join(testDir, randKey()), done);
+        fs.mkdir(path.join(testDir, testUtil.randKey()), done);
       });
     });
 
@@ -91,10 +86,10 @@ describe('dirTreeTests', function() {
     var testDir;
 
     beforeEach(function(done) {
-      testDir = path.join(basePath, randKey());
+      testDir = path.join(basePath, testUtil.randKey());
       fs.mkdir(testDir, function(err) {
         if (err) done(err);
-        fs.writeFile(path.join(testDir, randKey()), 'test', done);
+        fs.writeFile(path.join(testDir, testUtil.randKey()), 'test', done);
       });
     });
 

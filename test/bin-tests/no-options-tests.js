@@ -1,15 +1,12 @@
-var crypto = require('crypto');
 var fs = require('fs');
 var path = require('path');
 var expect = require('chai').expect;
+var Promise = require('bluebird');
 
 var binRunner = require('./runner');
+var testUtil = require('../util');
 
 var temp = require('temp').track();
-
-function randKey() {
-  return crypto.randomBytes(20).toString('hex');
-}
 
 describe('no-options-tests', function() {
 
@@ -30,14 +27,14 @@ describe('no-options-tests', function() {
   describe('single dir single file', function() {
 
     beforeEach(function(done) {
-      return fs.mkdir(path.join(basePath, randKey()), function(err) {
+      return fs.mkdir(path.join(basePath, testUtil.randKey()), function(err) {
         if (err) return done(err);
-        return fs.writeFile(path.join(basePath, randKey()), 'test data', done);
+        return fs.writeFile(path.join(basePath, testUtil.randKey()), 'test data', done);
       });
     });
 
     it('should have create simple listing file', function(done) {
-      try {
+      return Promise.try(function() {
         return binRunner(basePath, [], function(report) {
           expect(report).to.be.an('object');
           expect(report.path).to.equal(basePath);
@@ -46,9 +43,10 @@ describe('no-options-tests', function() {
           expect(report.stdout.length).to.equal(0);
           expect(report.stderr).to.be.an('array');
           expect(report.stderr.length).to.equal(0);
-          done();
         });
-      } catch (err) { done(err); }
+      })
+      .then(done)
+      .catch(done);
     });
 
   });

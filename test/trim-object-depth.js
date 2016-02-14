@@ -1,11 +1,8 @@
-var crypto = require('crypto');
 var expect = require('chai').expect;
 
-var trimObjectDepth = require('../src/json-writer').trimObjectDepth;
+var testUtil = require('./util');
 
-function randKey() {
-  return crypto.randomBytes(20).toString('hex');
-}
+var trimObjectDepth = require('../src/json-writer').trimObjectDepth;
 
 describe('trim-object-depth', function() {
 
@@ -25,8 +22,8 @@ describe('trim-object-depth', function() {
 
     it('should reduce to single-attribute obj', function(done) {
       var testObj = { children : [] };
-      var testAttribute = randKey();
-      var testValue = randKey();
+      var testAttribute = testUtil.randKey();
+      var testValue = testUtil.randKey();
       testObj[testAttribute] = testValue;
 
       return trimObjectDepth(testObj, 0)

@@ -1,16 +1,14 @@
-var crypto = require('crypto');
 var fs = require('fs');
 var path = require('path');
 var expect = require('chai').expect;
+var Promise = require('bluebird');
+
+var testUtil = require('../util');
 
 var binRunner = require('./runner');
 var defaultListingFile = require('../../src/config').defaults.listingFile;
 
 var temp = require('temp').track();
-
-function randKey() {
-  return crypto.randomBytes(20).toString('hex');
-}
 
 describe('dryrun-tests', function() {
 
@@ -31,15 +29,16 @@ describe('dryrun-tests', function() {
   describe('single dir single file', function() {
 
     beforeEach(function(done) {
-      return fs.mkdir(path.join(basePath, randKey()), function(err) {
+      return fs.mkdir(path.join(basePath, testUtil.randKey()), function(err) {
         if (err) return done(err);
-        return fs.writeFile(path.join(basePath, randKey()), 'test data', done);
+        return fs.writeFile(path.join(basePath, testUtil.randKey()), 'test data', done);
       });
     });
 
     it('should have no listing and stdout', function(done) {
-      var testfile = randKey() + '.json';
-      try {
+      return Promise.try(function() {
+        var testfile = testUtil.randKey() + '.json';
+
         return binRunner(basePath, ['-o', testfile], function(report) {
           expect(report).to.be.an('object');
           expect(report.path).to.equal(basePath);
@@ -48,15 +47,18 @@ describe('dryrun-tests', function() {
           expect(report.stdout.length).to.equal(0);
           expect(report.stderr).to.be.an('array');
           expect(report.stderr.length).to.equal(0);
-          fs.exists(path.join(basePath, defaultListingFile), function(exists) {
-            expect(exists).to.equal(false);
-            fs.exists(path.join(basePath, testfile), function(innerExists) {
+          return testUtil.doesFileExist(path.join(basePath, defaultListingFile))
+            .then(function(exists) {
+              expect(exists).to.equal(false);
+              return testUtil.doesFileExist(path.join(basePath, testfile));
+            })
+            .then(function(innerExists) {
               expect(innerExists).to.equal(true);
-              done();
             });
-          });
         });
-      } catch (err) { done(err); }
+      })
+      .then(done)
+      .catch(done);
     });
 
   });
