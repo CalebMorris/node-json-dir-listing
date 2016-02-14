@@ -158,6 +158,88 @@ describe('json-writer-tests', function() {
       .catch(done);
     });
 
+    it('should generate sparse report', function(done) {
+      return Promise.try(function() {
+        var testFile = path.join(testDir, randKey());
+        var testData = { children : [] };
+        testData[randKey()] = randKey();
+
+        var reports = [];
+
+        return writeObjectToJSON(testFile, testData, {
+          sparse : '0',
+          dryrun : true,
+          reportDryRunWrite : function(report) { reports.push(report); },
+        }).then(function() {
+          return new Promise(function(resolve, reject) {
+            delete testData.children;
+            fs.exists(testFile, function(exists) {
+              try {
+                expect(exists).to.equal(false);
+                expect(reports).to.be.an('array');
+                expect(reports.length).to.equal(1);
+                var report = JSON.parse(reports[0]);
+                expect(report).to.be.an('object');
+                expect(report.listingFile).to.equal(testFile);
+                expect(report.report).to.deep.equal(testData);
+                return resolve();
+              } catch (err) { return reject(err); }
+            });
+          });
+        });
+      })
+      .then(done)
+      .catch(done);
+    });
+
+  });
+
+  describe('deeper tests', function() {
+
+    var dirs = [];
+
+    beforeEach(function(done) {
+      return Promise.reduce([randKey(), randKey(), randKey()], function(current, nextKey) {
+        var nextDir = path.join(current, nextKey);
+        dirs.push(nextDir);
+        return new Promise(function(resolve, reject) {
+          return fs.mkdir(nextDir, function(err) {
+            if (err) return reject(err);
+            return resolve(nextDir);
+          });
+        });
+      }, basePath)
+      .then(function() { done(); })
+      .catch(done);
+    });
+
+    it('should create listing at each child dir', function(done) {
+      return Promise.try(function() {
+        var reports = [];
+        var testData = {
+          type : 'folder',
+          path : dirs[0],
+          children : [{
+            path : dirs[1],
+            type : 'folder',
+            children : [],
+          }],
+        };
+
+        return writeObjectToJSON(dirs[0], testData, {
+          sparse : '0',
+          recursive : true,
+          dryrun : true,
+          reportDryRunWrite : function(report) { reports.push(report); },
+        }).then(function() {
+          expect(reports).to.be.an('array');
+          expect(reports.length).to.equal(2);
+        });
+      })
+      .then(done)
+      .catch(done);
+    });
+
   });
 
 });
