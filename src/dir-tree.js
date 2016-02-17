@@ -12,11 +12,13 @@ var readdir = Promise.promisify(fs.readdir);
  * @param {string} filename - path to file to start
  * @return {Promise} Returns promise of an info object
  */
-function dirTree(filename) {
+function dirTree(filename, options) {
+  options = options || {};
   return lstat(filename)
     .then(function(stats) {
+      var filepath = options.basepath ? path.relative(options.basepath, filename) : filename;
       var info = {
-        path : filename,
+        path : filepath,
         name : path.basename(filename),
       };
 
@@ -28,7 +30,7 @@ function dirTree(filename) {
             if (children && children.length > 0) {
 
               return Promise.map(children, function(child) {
-                return dirTree(filename + '/' + child);
+                return dirTree(filename + '/' + child, options);
               }).then(function(resolvedChildren) {
                 info.children = resolvedChildren;
 

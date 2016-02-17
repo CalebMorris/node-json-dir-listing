@@ -10,7 +10,7 @@ function createListings(basePath, options) {
 
   var dryRunReports = [];
 
-  return dirTree(basePath)
+  return dirTree(basePath, options)
     .then(function(pathInfo) {
       if (options.output) {
         defaultListingFile = options.output;

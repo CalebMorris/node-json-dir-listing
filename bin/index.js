@@ -19,6 +19,7 @@ program
   .option('-R, --recursive', 'Recursively create listings for all subfolders')
   .option('-o, --output [name]', 'Specify the name to use for the file output', defaultListingFile)
   .option('-s, --sparse [depth]', 'Create listings that only contains n [depth] of children', null)
+  .option('-b, --basepath [root]', 'Root for generated relative `path`', '.')
   // TODO: [Start]
   // .option('-v, --verbose', 'Display more information as we walk the directory')
   // .option('--override', 'Override any current files')
@@ -35,6 +36,7 @@ options.override = program.override;
 options.patch = program.patch;
 options.output = program.output;
 options.sparse = program.sparse;
+options.basepath = program.basepath;
 
 if (!program.args || program.args.length === 0) {
   console.log('Usage: ' + usageString);
