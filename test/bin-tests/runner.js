@@ -40,8 +40,12 @@ function execRunner(dirPath, flags) {
 
       var report = {
         path : dirPath,
-        stdout : stdout,
-        stderr : stderr,
+        stdout : stdout.split('\n')
+          .filter(function(x) { return x !== ''; })
+          .filter(function(x) { return !!x; }),
+        stderr : stderr.split('\n')
+          .filter(function(x) { return x !== ''; })
+          .filter(function(x) { return !!x; }),
       };
 
       return resolve(report);

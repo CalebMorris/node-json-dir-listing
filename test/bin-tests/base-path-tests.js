@@ -38,11 +38,14 @@ describe('base-path-tests', function() {
       .then(function(report) {
         expect(report).to.be.an('object');
         expect(report.path).to.equal(basePath);
-        var output = JSON.parse(report.stdout);
+        expect(report.stdout).to.be.an('array');
+        expect(report.stdout.length).to.equal(1);
+        var output = JSON.parse(report.stdout[0]);
         expect(output).to.be.an('object');
         expect(output).to.contain.keys(['report']);
         expect(output.report.path).to.equal(path.basename(basePath));
-        expect(report.stderr).to.equal('');
+        expect(report.stderr).to.be.an('array');
+        expect(report.stderr.length).to.equal(0);
         return testUtil.doesFileExist(path.join(basePath, defaultListingFile))
           .then(function(exists) {
             expect(exists).to.equal(false);
