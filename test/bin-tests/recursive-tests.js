@@ -6,7 +6,7 @@ var Promise = require('bluebird');
 var mkdir = Promise.promisify(fs.mkdir);
 var writeFile = Promise.promisify(fs.writeFile);
 
-var binRunner = require('./runner');
+var binRunner = require('./runner').runner;
 var testUtil = require('../util');
 var defaultListingFile = require('../../src/config').defaults.listingFile;
 

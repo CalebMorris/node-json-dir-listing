@@ -5,7 +5,7 @@ var Promise = require('bluebird');
 
 var testUtil = require('../util');
 
-var binRunner = require('./runner');
+var binRunner = require('./runner').runner;
 var defaultListingFile = require('../../src/config').defaults.listingFile;
 
 var temp = require('temp').track();

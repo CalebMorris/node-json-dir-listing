@@ -3,7 +3,7 @@ var path = require('path');
 var expect = require('chai').expect;
 var Promise = require('bluebird');
 
-var binRunner = require('./runner');
+var binRunner = require('./runner').runner;
 var defaultListingFile = require('../../src/config').defaults.listingFile;
 var testUtil = require('../util');
 
