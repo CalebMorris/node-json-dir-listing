@@ -1,6 +1,6 @@
 {
   "name": "json-dir-listing",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Tool to generate JSON directory listings",
   "main": "index.js",
   "engines": {
