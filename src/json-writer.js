@@ -53,7 +53,7 @@ function writeObjectToJSON(filename, obj, options) {
       basePromise = basePromise.then(function() {
         return Promise.map(obj.children, function(child) {
           if (child.type === 'folder') {
-            return writeObjectToJSON(path.join(child.path, listingFile), child, options);
+            return writeObjectToJSON(path.join(child.relativePath, listingFile), child, options);
           }
         });
       });

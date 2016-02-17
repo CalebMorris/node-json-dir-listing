@@ -19,6 +19,7 @@ function dirTree(filename, options) {
       var filepath = options.basepath ? path.relative(options.basepath, filename) : filename;
       var info = {
         path : filepath,
+        relativePath : filename,
         name : path.basename(filename),
       };
 

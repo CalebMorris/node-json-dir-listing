@@ -42,7 +42,7 @@ describe('dirTreeTests', function() {
       return dirTree(testDir)
         .then(function(info) {
           expect(info).to.be.an('object');
-          expect(info).to.have.keys(['path', 'name', 'type']);
+          expect(info).to.have.keys(['path', 'relativePath', 'name', 'type']);
           expect(info).to.not.have.key('children');
         })
         .then(done)
@@ -68,12 +68,12 @@ describe('dirTreeTests', function() {
       return dirTree(testDir)
         .then(function(info) {
           expect(info).to.be.an('object');
-          expect(info).to.have.any.keys(['path', 'name', 'type', 'children']);
+          expect(info).to.have.any.keys(['path', 'relativePath', 'name', 'type', 'children']);
           expect(info.children).to.be.an('array');
           expect(info.children.length).to.equal(1);
           var child = info.children[0];
           expect(child).to.be.an('object');
-          expect(child).to.have.keys(['path', 'name', 'type']);
+          expect(child).to.have.keys(['path', 'relativePath', 'name', 'type']);
         })
         .then(done)
         .catch(done);
@@ -98,12 +98,12 @@ describe('dirTreeTests', function() {
       return dirTree(testDir)
         .then(function(info) {
           expect(info).to.be.an('object');
-          expect(info).to.have.keys(['path', 'name', 'type', 'children']);
+          expect(info).to.have.keys(['path', 'relativePath', 'name', 'type', 'children']);
           expect(info.children).to.be.an('array');
           expect(info.children.length).to.equal(1);
           var child = info.children[0];
           expect(child).to.be.an('object');
-          expect(child).to.have.keys(['path', 'name', 'type']);
+          expect(child).to.have.keys(['path', 'relativePath', 'name', 'type']);
         })
         .then(done)
         .catch(done);

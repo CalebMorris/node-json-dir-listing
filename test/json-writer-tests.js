@@ -202,10 +202,10 @@ describe('json-writer-tests', function() {
         var reports = [];
         var testData = {
           type : 'folder',
-          path : dirs[0],
+          relativePath : dirs[0],
           children : [{
-            path : dirs[1],
             type : 'folder',
+            relativePath : dirs[1],
             children : [],
           }],
         };
