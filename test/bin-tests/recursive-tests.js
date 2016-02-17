@@ -6,7 +6,7 @@ var Promise = require('bluebird');
 var mkdir = Promise.promisify(fs.mkdir);
 var writeFile = Promise.promisify(fs.writeFile);
 
-var binRunner = require('./runner').runner;
+var binRunner = require('./runner').execRunner;
 var testUtil = require('../util');
 var defaultListingFile = require('../../src/config').defaults.listingFile;
 
@@ -52,10 +52,10 @@ describe('recursive-tests', function() {
 
     it('should have two listings', function(done) {
       return Promise.try(function() {
-        return binRunner(basePath, ['-R'], function(report) {
+        return binRunner(basePath, ['-R'])
+        .then(function(report) {
           expect(report).to.be.an('object');
           expect(report.path).to.equal(basePath);
-          expect(report.exitCode).to.equal(0);
           expect(report.stdout).to.be.an('array');
           expect(report.stdout.length).to.equal(0);
           expect(report.stderr).to.be.an('array');
@@ -76,10 +76,10 @@ describe('recursive-tests', function() {
 
     it('should report two listings', function(done) {
       return Promise.try(function() {
-        return binRunner(basePath, ['-R', '-d'], function(report) {
+        return binRunner(basePath, ['-R', '-d'])
+        .then(function(report) {
           expect(report).to.be.an('object');
           expect(report.path).to.equal(basePath);
-          expect(report.exitCode).to.equal(0);
           expect(report.stdout).to.be.an('array');
           expect(report.stdout.length).to.equal(3, JSON.stringify(report.stdout));
           var baseFiles = [ trinaryPath, secondaryPath, basePath ];
@@ -91,7 +91,7 @@ describe('recursive-tests', function() {
               expect.fail(null, null, 'Failed to parse json: ' + report.stdout[i]);
             }
             expect(dryrunReport).to.be.an('object');
-            expect(dryrunReport.listingFile).to.equal(path.join(baseFiles[i], defaultListingFile));
+            expect(dryrunReport.listingFile).to.contain(path.join(baseFiles[i], defaultListingFile));
           }
           expect(report.stderr).to.be.an('array');
           expect(report.stderr.length).to.equal(0);

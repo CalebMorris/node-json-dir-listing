@@ -6,7 +6,7 @@ var Promise = require('bluebird');
 var mkdir = Promise.promisify(fs.mkdir);
 var writeFile = Promise.promisify(fs.writeFile);
 
-var binRunner = require('./runner').runner;
+var binRunner = require('./runner').execRunner;
 var testUtil = require('../util');
 
 var defaultListingFile = require('../../src/config').defaults.listingFile;
@@ -52,7 +52,8 @@ describe('sparse-tests', function() {
 
     it('should have no children', function(done) {
       return Promise.try(function() {
-        return binRunner(basePath, ['-d', '-s', '0'], function(report) {
+        return binRunner(basePath, ['-d', '-s', '0'])
+        .then(function(report) {
           expect(report).to.be.an('object');
           expect(report.path).to.equal(basePath);
           expect(report.stderr).to.be.an('array');
@@ -62,7 +63,6 @@ describe('sparse-tests', function() {
           var run = JSON.parse(report.stdout);
           expect(run).to.be.an('object');
           expect(run).to.not.contain.keys(['children']);
-          expect(report.exitCode).to.equal(0);
           return testUtil.doesFileExist(path.join(basePath, defaultListingFile))
             .then(function(exists) {
               expect(exists).to.equal(false);
@@ -75,7 +75,8 @@ describe('sparse-tests', function() {
 
     it('should have no children', function(done) {
       return Promise.try(function() {
-        return binRunner(basePath, ['-d', '-s', '1'], function(report) {
+        return binRunner(basePath, ['-d', '-s', '1'])
+        .then(function(report) {
           expect(report).to.be.an('object');
           expect(report.path).to.equal(basePath);
           expect(report.stderr).to.be.an('array');
@@ -92,7 +93,6 @@ describe('sparse-tests', function() {
             expect(child).to.be.an('object');
             expect(child).to.not.contain.keys(['children']);
           }
-          expect(report.exitCode).to.equal(0);
           return testUtil.doesFileExist(path.join(basePath, defaultListingFile))
             .then(function(exists) {
               expect(exists).to.equal(false);

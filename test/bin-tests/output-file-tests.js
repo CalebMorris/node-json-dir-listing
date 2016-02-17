@@ -5,7 +5,7 @@ var Promise = require('bluebird');
 
 var testUtil = require('../util');
 
-var binRunner = require('./runner').runner;
+var binRunner = require('./runner').execRunner;
 var defaultListingFile = require('../../src/config').defaults.listingFile;
 
 var temp = require('temp').track();
@@ -39,10 +39,10 @@ describe('dryrun-tests', function() {
       return Promise.try(function() {
         var testfile = testUtil.randKey() + '.json';
 
-        return binRunner(basePath, ['-o', testfile], function(report) {
+        return binRunner(basePath, ['-o', testfile])
+        .then(function(report) {
           expect(report).to.be.an('object');
           expect(report.path).to.equal(basePath);
-          expect(report.exitCode).to.equal(0);
           expect(report.stdout).to.be.an('array');
           expect(report.stdout.length).to.equal(0);
           expect(report.stderr).to.be.an('array');

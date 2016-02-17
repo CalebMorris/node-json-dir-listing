@@ -3,7 +3,7 @@ var path = require('path');
 var expect = require('chai').expect;
 var Promise = require('bluebird');
 
-var binRunner = require('./runner').runner;
+var binRunner = require('./runner').execRunner;
 var testUtil = require('../util');
 
 var temp = require('temp').track();
@@ -35,10 +35,10 @@ describe('no-options-tests', function() {
 
     it('should have create simple listing file', function(done) {
       return Promise.try(function() {
-        return binRunner(basePath, [], function(report) {
+        return binRunner(basePath, [])
+        .then(function(report) {
           expect(report).to.be.an('object');
           expect(report.path).to.equal(basePath);
-          expect(report.exitCode).to.equal(0);
           expect(report.stdout).to.be.an('array');
           expect(report.stdout.length).to.equal(0);
           expect(report.stderr).to.be.an('array');

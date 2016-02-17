@@ -3,7 +3,7 @@ var path = require('path');
 var expect = require('chai').expect;
 var Promise = require('bluebird');
 
-var binRunner = require('./runner').runner;
+var binRunner = require('./runner').execRunner;
 var defaultListingFile = require('../../src/config').defaults.listingFile;
 var testUtil = require('../util');
 
@@ -36,10 +36,10 @@ describe('dryrun-tests', function() {
 
     it('should have no listing and stdout', function(done) {
       return Promise.try(function() {
-        return binRunner(basePath, ['-d'], function(report) {
+        return binRunner(basePath, ['-d'])
+        .then(function(report) {
           expect(report).to.be.an('object');
           expect(report.path).to.equal(basePath);
-          expect(report.exitCode).to.equal(0);
           expect(report.stdout).to.be.an('array');
           expect(report.stdout.length).to.equal(1);
           var output = JSON.parse(report.stdout[0]);
