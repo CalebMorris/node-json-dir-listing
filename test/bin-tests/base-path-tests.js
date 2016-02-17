@@ -1,12 +1,15 @@
 var fs = require('fs');
 var path = require('path');
 var expect = require('chai').expect;
+var Promise = require('bluebird');
 
 var binRunner = require('./runner').execRunner;
 var defaultListingFile = require('../../src/config').defaults.listingFile;
 var testUtil = require('../util');
 
 var temp = require('temp').track();
+
+var readFile = Promise.promisify(fs.readFile);
 
 describe('base-path-tests', function() {
 
@@ -49,6 +52,31 @@ describe('base-path-tests', function() {
         return testUtil.doesFileExist(path.join(basePath, defaultListingFile))
           .then(function(exists) {
             expect(exists).to.equal(false);
+          });
+      })
+      .then(done)
+      .catch(done);
+    });
+
+    it('should have listing with changed `path`', function(done) {
+      return binRunner(basePath, ['-b', basePath + '/..'])
+      .then(function(report) {
+        expect(report).to.be.an('object');
+        expect(report.path).to.equal(basePath);
+        expect(report.stdout).to.be.an('array');
+        expect(report.stdout.length).to.equal(0);
+        expect(report.stderr).to.be.an('array');
+        expect(report.stderr.length).to.equal(0);
+        var filename = path.join(basePath, defaultListingFile);
+        return testUtil.doesFileExist(filename)
+          .then(function(exists) {
+            expect(exists).to.equal(true);
+            return readFile(filename, 'utf8');
+          })
+          .then(function(listingContents) {
+            var listing = JSON.parse(listingContents);
+            expect(listing).to.be.an('object');
+            expect(listing).to.have.keys(['relativePath', 'children', 'name', 'path', 'type']);
           });
       })
       .then(done)
